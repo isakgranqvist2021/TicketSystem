@@ -1,5 +1,3 @@
-using Npgsql;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -14,10 +12,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-var connString = Environment.GetEnvironmentVariable("PSQL_CONNECTION_STRING");
-await using var conn = new NpgsqlConnection(connString);
-await conn.OpenAsync();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

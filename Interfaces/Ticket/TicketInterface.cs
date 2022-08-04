@@ -4,9 +4,9 @@ namespace TicketSystem.Interfaces.Ticket;
 
 interface TicketInterface
 {
-    public string Create(CreateTicketModel data);
-    public TicketModel GetOneById(int ticketId);
-    public List<TicketModel> GetAll();
-    public bool UpdateOneById(int ticketId, UpdateTicketModel data);
-    public bool DeleteOneById(int ticketId);
+    public Task<string> Create(CreateTicketModel data);
+    public TicketModel GetOneById(string ID);
+    public Task<List<TicketModel>> GetAll();
+    public bool UpdateOneById(string ID, UpdateTicketModel data);
+    public bool DeleteOneById(string ID);
 };

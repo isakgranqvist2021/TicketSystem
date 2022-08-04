@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using TicketSystem.Models.Ticket;
+using TicketSystem.Services.Ticket;
 
 namespace TicketSystem.Controllers.Ticket;
 
@@ -7,6 +9,7 @@ namespace TicketSystem.Controllers.Ticket;
 public class TicketController : ControllerBase
 {
     private readonly ILogger<TicketController> _logger;
+    private readonly TicketService _ticketService = new TicketService();
 
     public TicketController(ILogger<TicketController> logger)
     {
@@ -18,48 +21,56 @@ public class TicketController : ControllerBase
     [Consumes("application/json")]
     [Route("")]
     [HttpPost]
-    public Object Create(Object data)
+    public async Task<IActionResult> Create([FromBody] CreateTicketModel data)
     {
-        return new { };
+        if (ModelState.IsValid)
+        {
+            await _ticketService.Create(data);
+            return Created("title", data);
+        };
+
+        return BadRequest();
     }
 
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [Route("/{ticketId}")]
+    [Route("{ID}")]
     [HttpGet]
-    public Object GetOneById(int ticketId)
+    public ActionResult<TicketModel> GetOneById(string ID)
     {
-        return new { };
+        return Ok();
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("")]
     [HttpGet]
-    public Object GetAll()
+    public async Task<ActionResult<TicketModel>> GetAll()
     {
-        return new { };
+        var tickets = await _ticketService.GetAll();
+
+        return Ok(tickets);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("application/json")]
-    [Route("/{ticketId}")]
+    [Route("{ID}")]
     [HttpPut]
-    public Object UpdateOneById(int ticketId, Object data)
+    public IActionResult UpdateOneById(string ID, Object data)
     {
-        return new { };
+        return Ok();
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [Route("/{ticketId}")]
+    [Route("{ID}")]
     [HttpDelete]
-    public Object DeleteOneById(int ticketId)
+    public IActionResult DeleteOneById(string ID)
     {
-        return new { };
+        return Ok();
     }
 }

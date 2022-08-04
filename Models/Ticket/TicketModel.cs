@@ -1,17 +1,24 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TicketSystem.Models.Ticket;
 
-class TicketModel
+public class TicketModel
 {
+    [Required]
     public string ID { get; set; } = "";
+
+    [Required]
     public string? TITLE { get; set; }
 }
 
-class CreateTicketModel
+public class CreateTicketModel
 {
+    [Required]
     public string TITLE { get; set; } = "";
 }
 
-class UpdateTicketModel
+public class UpdateTicketModel
 {
+    [Required]
     public string? TITLE { get; set; }
 }
