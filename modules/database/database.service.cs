@@ -2,9 +2,9 @@ using Npgsql;
 
 namespace TicketSystem.Database;
 
-public class DatabaseService : DatabaseInterface
+public static class DatabaseService
 {
-    public async Task<NpgsqlConnection?> OpenConnection()
+    public static async Task<NpgsqlConnection?> OpenConnection()
     {
         try
         {
