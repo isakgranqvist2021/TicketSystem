@@ -14,16 +14,28 @@ class TicketService : TicketInterface
     {
         var conn = await _databaseService.OpenConnection();
 
-        var cmd = new NpgsqlCommand("INSERT INTO ticket (TITLE) VALUES (@TITLE)", conn);
-        cmd.Parameters.AddWithValue("TITLE", data.TITLE);
+        var cmd = new NpgsqlCommand("INSERT INTO ticket (TITLE) VALUES ($1)", conn);
+        cmd.Parameters.AddWithValue(data.TITLE ?? "");
         await cmd.ExecuteNonQueryAsync();
 
         return "OK";
     }
 
-    public TicketModel GetOneById(string ID)
+    async public Task<TicketModel> GetOneById(string ID)
     {
-        return new TicketModel { };
+        var conn = await _databaseService.OpenConnection();
+
+        var cmd = new NpgsqlCommand("SELECT * FROM ticket WHERE ID = $1", conn);
+        cmd.Parameters.AddWithValue(Guid.Parse(ID));
+
+        var reader = await cmd.ExecuteReaderAsync();
+        await reader.ReadAsync();
+
+        return new TicketModel
+        {
+            ID = reader.GetGuid(0).ToString(),
+            TITLE = reader.GetString(1),
+        };
     }
 
     async public Task<List<TicketModel>> GetAll()
@@ -46,13 +58,26 @@ class TicketService : TicketInterface
         return returnValue;
     }
 
-    public bool UpdateOneById(string ID, UpdateTicketModel data)
+    async public Task<bool> UpdateOneById(string ID, UpdateTicketModel data)
     {
+        var conn = await _databaseService.OpenConnection();
+
+        var cmd = new NpgsqlCommand("UPDATE ticket SET TITLE = $1 WHERE ID = $2", conn);
+        cmd.Parameters.AddWithValue(data.TITLE ?? "");
+        cmd.Parameters.AddWithValue(Guid.Parse(ID));
+        await cmd.ExecuteNonQueryAsync();
+
         return true;
     }
 
-    public bool DeleteOneById(string ID)
+    async public Task<bool> DeleteOneById(string ID)
     {
+        var conn = await _databaseService.OpenConnection();
+
+        var cmd = new NpgsqlCommand("DELETE FROM ticket WHERE ID = $1", conn);
+        cmd.Parameters.AddWithValue(Guid.Parse(ID));
+        await cmd.ExecuteNonQueryAsync();
+
         return true;
     }
 }

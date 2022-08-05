@@ -37,19 +37,19 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("{ID}")]
     [HttpGet]
-    public ActionResult<TicketModel> GetOneById(string ID)
+    async public Task<ActionResult<TicketModel>> GetOneById(string ID)
     {
-        return Ok();
+        var ticket = await _ticketService.GetOneById(ID);
+        return Ok(ticket);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("")]
     [HttpGet]
-    public async Task<ActionResult<TicketModel>> GetAll()
+    public async Task<ActionResult<List<TicketModel>>> GetAll()
     {
         var tickets = await _ticketService.GetAll();
-
         return Ok(tickets);
     }
 
@@ -59,9 +59,16 @@ public class TicketController : ControllerBase
     [Consumes("application/json")]
     [Route("{ID}")]
     [HttpPut]
-    public IActionResult UpdateOneById(string ID, Object data)
+    async public Task<IActionResult> UpdateOneById(string ID, UpdateTicketModel data)
     {
-        return Ok();
+
+        if (ModelState.IsValid)
+        {
+            await _ticketService.UpdateOneById(ID, data);
+            return Created("title", data);
+        };
+
+        return BadRequest();
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -69,8 +76,9 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Route("{ID}")]
     [HttpDelete]
-    public IActionResult DeleteOneById(string ID)
+    async public Task<IActionResult> DeleteOneById(string ID)
     {
+        await _ticketService.DeleteOneById(ID);
         return Ok();
     }
 }
