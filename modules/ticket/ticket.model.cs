@@ -4,21 +4,45 @@ namespace TicketSystem.Ticket;
 
 public class TicketModel
 {
-    [Required]
-    public string ID { get; set; } = "";
+    public string id { get; set; } = "";
 
-    [Required]
-    public string? TITLE { get; set; } = null;
+    public DateTime created_at { get; set; }
+
+    public long amount { get; set; }
+
+    public string title { get; set; } = "";
+
+    public long price { get; set; }
+
+    public string description { get; set; } = "";
 }
 
 public class CreateTicketModel
 {
     [Required]
-    public string? TITLE { get; set; } = null;
+    public long amount { get; set; }
+
+    [Required]
+    public string title { get; set; } = "";
+
+    [Required]
+    public long price { get; set; }
+
+    [Required]
+    public string description { get; set; } = "";
 }
 
 public class UpdateTicketModel
 {
     [Required]
-    public string? TITLE { get; set; } = null;
+    public string title { get; set; } = "";
+
+    [Required]
+    public long amount { get; set; }
+
+    [Required]
+    public long price { get; set; }
+
+    [Required]
+    public string description { get; set; } = "";
 }

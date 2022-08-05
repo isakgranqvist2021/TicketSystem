@@ -39,7 +39,12 @@ public class TicketController : ControllerBase
     async public Task<ActionResult<TicketModel>> GetOneById(string ID)
     {
         var ticket = await _ticketService.GetOneById(ID);
-        return Ok(ticket);
+        if (ticket != null)
+        {
+            return Ok(ticket);
+        }
+
+        return NotFound();
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,7 +54,12 @@ public class TicketController : ControllerBase
     public async Task<ActionResult<List<TicketModel>>> GetAll()
     {
         var tickets = await _ticketService.GetAll();
-        return Ok(tickets);
+        if (tickets != null)
+        {
+            return Ok(tickets);
+        }
+
+        return NotFound();
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -78,6 +88,12 @@ public class TicketController : ControllerBase
     async public Task<IActionResult> DeleteOneById(string ID)
     {
         var id = await _ticketService.DeleteOneById(ID);
-        return Ok();
+
+        if (id != null)
+        {
+            return Ok();
+        }
+
+        return NotFound();
     }
 }

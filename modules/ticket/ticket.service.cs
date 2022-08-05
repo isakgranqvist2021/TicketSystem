@@ -13,8 +13,15 @@ class TicketService : TicketInterface
         {
             var connection = await _databaseService.OpenConnection();
 
-            var cmd = new NpgsqlCommand("INSERT INTO ticket (TITLE) VALUES ($1) RETURNING ID", connection);
-            cmd.Parameters.AddWithValue(data.TITLE ?? "");
+            var cmd = new NpgsqlCommand(
+                "INSERT INTO ticket (amount, title, price, description) VALUES ($1, $2, $3, $4)",
+                connection
+            );
+
+            cmd.Parameters.AddWithValue(data.amount);
+            cmd.Parameters.AddWithValue(data.title ?? "");
+            cmd.Parameters.AddWithValue(data.price);
+            cmd.Parameters.AddWithValue(data.description);
             await cmd.ExecuteNonQueryAsync();
 
             connection?.Close();
@@ -32,18 +39,25 @@ class TicketService : TicketInterface
         {
             var connection = await _databaseService.OpenConnection();
 
-            var cmd = new NpgsqlCommand("SELECT * FROM ticket WHERE ID = $1", connection);
+            var cmd = new NpgsqlCommand("SELECT * FROM ticket WHERE id = $1", connection);
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
 
             var reader = await cmd.ExecuteReaderAsync();
             await reader.ReadAsync();
 
-            connection?.Close();
-            return new TicketModel
+            var ticket = new TicketModel
             {
-                ID = reader.GetGuid(0).ToString(),
-                TITLE = reader.GetString(1),
+                id = reader.GetGuid(0).ToString(),
+                created_at = reader.GetDateTime(1),
+                amount = reader.GetInt32(2),
+                title = reader.GetString(3),
+                price = reader.GetInt32(4),
+                description = reader.GetString(5)
             };
+
+            connection?.Close();
+
+            return ticket;
         }
         catch
         {
@@ -63,11 +77,17 @@ class TicketService : TicketInterface
             var returnValue = new List<TicketModel> { };
             while (await reader.ReadAsync())
             {
-                returnValue.Add(new TicketModel
+                var ticket = new TicketModel
                 {
-                    ID = reader.GetGuid(0).ToString(),
-                    TITLE = reader.GetString(1),
-                });
+                    id = reader.GetGuid(0).ToString(),
+                    created_at = reader.GetDateTime(1),
+                    amount = reader.GetInt32(2),
+                    title = reader.GetString(3),
+                    price = reader.GetInt32(4),
+                    description = reader.GetString(5)
+                };
+
+                returnValue.Add(ticket);
             }
 
             connection?.Close();
@@ -85,8 +105,15 @@ class TicketService : TicketInterface
         {
             var connection = await _databaseService.OpenConnection();
 
-            var cmd = new NpgsqlCommand("UPDATE ticket SET TITLE = $1 WHERE ID = $2", connection);
-            cmd.Parameters.AddWithValue(data.TITLE ?? "");
+            var cmd = new NpgsqlCommand(
+                "UPDATE ticket SET title = $1, price = $2, amount = $3, description = $4 WHERE id = $5",
+                connection
+            );
+
+            cmd.Parameters.AddWithValue(data.title);
+            cmd.Parameters.AddWithValue(data.price);
+            cmd.Parameters.AddWithValue(data.amount);
+            cmd.Parameters.AddWithValue(data.description);
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
             await cmd.ExecuteNonQueryAsync();
 
@@ -105,7 +132,7 @@ class TicketService : TicketInterface
         {
             var connection = await _databaseService.OpenConnection();
 
-            var cmd = new NpgsqlCommand("DELETE FROM ticket WHERE ID = $1", connection);
+            var cmd = new NpgsqlCommand("DELETE FROM ticket WHERE id = $1", connection);
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
             await cmd.ExecuteNonQueryAsync();
 
