@@ -19,13 +19,13 @@ class TicketService : TicketInterface
                     new() { Value = data.title },
                     new() { Value = data.price },
                     new() { Value = data.description }
-                }
+                },
             };
 
-            await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteScalarAsync();
             connection?.Close();
 
-            return "OK";
+            return result?.ToString();
         }
         catch
         {
@@ -93,6 +93,7 @@ class TicketService : TicketInterface
                     new() { Value = data.price },
                     new() { Value = data.amount },
                     new() { Value = data.description },
+                    new() { Value = DateTime.Now },
                     new() { Value = Guid.Parse(ID) },
                 }
             };

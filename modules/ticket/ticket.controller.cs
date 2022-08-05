@@ -25,7 +25,7 @@ public class TicketController : ControllerBase
         if (ModelState.IsValid)
         {
             var id = await _ticketService.Create(data);
-            return Created("title", data);
+            return Created("id", new { id = id });
         };
 
         return BadRequest();
