@@ -1,5 +1,4 @@
-using TicketSystem.Models.Ticket;
-namespace TicketSystem.Interfaces.Ticket;
+namespace TicketSystem.Ticket;
 
 interface TicketInterface
 {

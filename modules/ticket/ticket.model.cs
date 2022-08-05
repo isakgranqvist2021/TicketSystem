@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TicketSystem.Models.Ticket;
+namespace TicketSystem.Ticket;
 
 public class TicketModel
 {

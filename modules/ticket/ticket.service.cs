@@ -1,9 +1,7 @@
 using Npgsql;
-using TicketSystem.Models.Ticket;
-using TicketSystem.Interfaces.Ticket;
-using TicketSystem.Services.Database;
+using TicketSystem.Database;
 
-namespace TicketSystem.Services.Ticket;
+namespace TicketSystem.Ticket;
 
 class TicketService : TicketInterface
 {
@@ -15,16 +13,16 @@ class TicketService : TicketInterface
         {
             var connection = await _databaseService.OpenConnection();
 
-            var cmd = new NpgsqlCommand("INSERT INTO ticket (TITLE) VALUES ($1)", connection);
+            var cmd = new NpgsqlCommand("INSERT INTO ticket (TITLE) VALUES ($1) RETURNING ID", connection);
             cmd.Parameters.AddWithValue(data.TITLE ?? "");
             await cmd.ExecuteNonQueryAsync();
 
-            connection.Close();
-            return null;
+            connection?.Close();
+            return "OK";
         }
-        catch (Exception e)
+        catch
         {
-            return e.ToString();
+            return null;
         }
     }
 
@@ -40,7 +38,7 @@ class TicketService : TicketInterface
             var reader = await cmd.ExecuteReaderAsync();
             await reader.ReadAsync();
 
-            connection.Close();
+            connection?.Close();
             return new TicketModel
             {
                 ID = reader.GetGuid(0).ToString(),
@@ -72,7 +70,7 @@ class TicketService : TicketInterface
                 });
             }
 
-            connection.Close();
+            connection?.Close();
             return returnValue;
         }
         catch
@@ -92,12 +90,12 @@ class TicketService : TicketInterface
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
             await cmd.ExecuteNonQueryAsync();
 
-            connection.Close();
-            return null;
+            connection?.Close();
+            return ID;
         }
-        catch (Exception e)
+        catch
         {
-            return e.ToString();
+            return null;
         }
     }
 
@@ -111,12 +109,12 @@ class TicketService : TicketInterface
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
             await cmd.ExecuteNonQueryAsync();
 
-            connection.Close();
-            return null;
+            connection?.Close();
+            return ID;
         }
-        catch (Exception e)
+        catch
         {
-            return e.ToString();
+            return null;
         }
     }
 }
