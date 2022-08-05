@@ -9,9 +9,9 @@ public class DatabaseService : DatabaseInterface
     {
         var connString = Environment.GetEnvironmentVariable("PSQL_CONNECTION_STRING");
 
-        var conn = new NpgsqlConnection(connString);
-        await conn.OpenAsync();
+        var connection = new NpgsqlConnection(connString);
+        await connection.OpenAsync();
 
-        return conn;
+        return connection;
     }
 }

@@ -59,7 +59,7 @@ public class TicketController : ControllerBase
     [Consumes("application/json")]
     [Route("{ID}")]
     [HttpPut]
-    async public Task<IActionResult> UpdateOneById(string ID, UpdateTicketModel data)
+    async public Task<IActionResult> UpdateOneById(string ID, [FromBody] UpdateTicketModel data)
     {
 
         if (ModelState.IsValid)
