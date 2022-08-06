@@ -28,7 +28,7 @@ public class TicketController : ControllerBase
             return Created("id", new { id = id });
         };
 
-        return BadRequest();
+        return BadRequest(ModelState);
     }
 
 
@@ -44,7 +44,7 @@ public class TicketController : ControllerBase
             return Ok(ticket);
         }
 
-        return NotFound();
+        return NotFound(ModelState);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -59,7 +59,7 @@ public class TicketController : ControllerBase
             return Ok(tickets);
         }
 
-        return NotFound();
+        return NotFound(ModelState);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,10 +74,16 @@ public class TicketController : ControllerBase
         if (ModelState.IsValid)
         {
             var id = await _ticketService.UpdateOneById(ID, data);
-            return Created("title", data);
+
+            if (id != null)
+            {
+                return Ok();
+            }
+
+            return NotFound(ModelState);
         };
 
-        return BadRequest();
+        return BadRequest(ModelState);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -94,6 +100,6 @@ public class TicketController : ControllerBase
             return Ok();
         }
 
-        return NotFound();
+        return NotFound(ModelState);
     }
 }

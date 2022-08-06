@@ -8,13 +8,22 @@ public static class TicketConstants
         RETURNING id
     ";
 
-    public static string GET_ONE_BY_ID = "SELECT * FROM ticket WHERE id = $1";
-    public static string GET_ALL = "SELECT * FROM ticket";
+    public static string GET_ONE_BY_ID = @"
+        SELECT * FROM ticket WHERE id = $1
+    ";
+
+    public static string GET_ALL = @"
+        SELECT * FROM ticket
+    ";
 
     public static string UPDATE_ONE_BY_ID = @"
         UPDATE ticket SET title = $1, price = $2, amount = $3, description = $4, updated_at = $5 
         WHERE id = $6
+        RETURNING id
     ";
 
-    public static string DELETE_ONE_BY_ID = "DELETE FROM ticket WHERE id = $1";
+    public static string DELETE_ONE_BY_ID = @"
+        DELETE FROM ticket WHERE id = $1
+        RETURNING id
+    ";
 }

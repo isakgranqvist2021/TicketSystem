@@ -24,4 +24,14 @@ public static class TicketUtils
             description = reader.GetString(6)
         };
     }
+
+    public static Object ValidateParameter(Object? value)
+    {
+        if (value == null)
+        {
+            return DBNull.Value;
+        }
+
+        return value;
+    }
 }

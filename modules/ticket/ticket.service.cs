@@ -5,7 +5,6 @@ namespace TicketSystem.Ticket;
 
 class TicketService : TicketInterface
 {
-
     async public Task<string?> Create(CreateTicketModel data)
     {
         try
@@ -16,9 +15,9 @@ class TicketService : TicketInterface
             {
                 Parameters = {
                     new() { Value = data.amount },
-                    new() { Value = data.title },
-                    new() { Value = data.price },
-                    new() { Value = data.description }
+                    new() { Value = TicketUtils.ValidateParameter(data.title) },
+                    new() { Value = TicketUtils.ValidateParameter(data.price) },
+                    new() { Value = TicketUtils.ValidateParameter(data.description) }
                 },
             };
 
@@ -89,19 +88,19 @@ class TicketService : TicketInterface
             var cmd = new NpgsqlCommand(TicketConstants.UPDATE_ONE_BY_ID, connection)
             {
                 Parameters = {
-                    new() { Value = data.title },
-                    new() { Value = data.price },
+                    new() { Value = TicketUtils.ValidateParameter(data.title) },
+                    new() { Value = TicketUtils.ValidateParameter(data.price) },
                     new() { Value = data.amount },
-                    new() { Value = data.description },
+                    new() { Value = TicketUtils.ValidateParameter(data.description) },
                     new() { Value = DateTime.Now },
                     new() { Value = Guid.Parse(ID) },
                 }
             };
 
-            await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteScalarAsync();
             connection?.Close();
 
-            return ID;
+            return result?.ToString();
         }
         catch
         {
@@ -118,10 +117,10 @@ class TicketService : TicketInterface
             var cmd = new NpgsqlCommand(TicketConstants.DELETE_ONE_BY_ID, connection);
             cmd.Parameters.AddWithValue(Guid.Parse(ID));
 
-            await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteScalarAsync();
             connection?.Close();
 
-            return ID;
+            return result?.ToString();
         }
         catch
         {
