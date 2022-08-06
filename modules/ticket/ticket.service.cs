@@ -73,8 +73,9 @@ class TicketService : TicketInterface
 
             return returnValue;
         }
-        catch
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return null;
         }
     }
