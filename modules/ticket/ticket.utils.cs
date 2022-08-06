@@ -6,7 +6,6 @@ public static class TicketUtils
 {
     public static TicketModel ReaderToTicketModel(NpgsqlDataReader reader)
     {
-
         DateTime? updated_at = null;
 
         if (!reader.IsDBNull(2))

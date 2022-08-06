@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace TicketSystem.Ticket;
 
 public class TicketModel
@@ -10,41 +9,33 @@ public class TicketModel
 
     public DateTime? updated_at { get; set; }
 
-    public long amount { get; set; }
+    public long amount { get; set; } = 0;
 
-    public string title { get; set; } = "";
+    public string? title { get; set; } = null;
 
-    public long price { get; set; }
+    public long? price { get; set; } = null;
 
-    public string description { get; set; } = "";
+    public string? description { get; set; } = null;
 }
 
 public class CreateTicketModel
 {
-    [Required]
-    public long amount { get; set; }
+    public long amount { get; set; } = 0;
 
-    [Required]
-    public string title { get; set; } = "";
+    public string? title { get; set; } = null;
 
-    [Required]
-    public long price { get; set; }
+    public long? price { get; set; } = null;
 
-    [Required]
-    public string description { get; set; } = "";
+    public string? description { get; set; } = null;
 }
 
 public class UpdateTicketModel
 {
-    [Required]
-    public string title { get; set; } = "";
+    public string? title { get; set; } = null;
 
-    [Required]
-    public long amount { get; set; }
+    public long amount { get; set; } = 0;
 
-    [Required]
-    public long price { get; set; }
+    public long? price { get; set; } = null;
 
-    [Required]
-    public string description { get; set; } = "";
+    public string? description { get; set; } = null;
 }
