@@ -1,23 +1,18 @@
 using Npgsql;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace TicketSystem.Database;
 
 public static class DatabaseService
 {
-    public static async Task<NpgsqlConnection?> OpenConnection()
+    public static QueryFactory? OpenConnection()
     {
-        try
-        {
-            var connString = Environment.GetEnvironmentVariable("PSQL_CONNECTION_STRING");
+        var uri = Environment.GetEnvironmentVariable("PSQL_CONNECTION_STRING");
 
-            var connection = new NpgsqlConnection(connString);
-            await connection.OpenAsync();
+        var connection = new NpgsqlConnection(uri);
+        var compiler = new PostgresCompiler();
 
-            return connection;
-        }
-        catch
-        {
-            return null;
-        }
+        return new QueryFactory(connection, compiler);
     }
 }

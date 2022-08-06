@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 namespace TicketSystem.Ticket;
 
 public class TicketModel

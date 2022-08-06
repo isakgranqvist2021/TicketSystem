@@ -20,13 +20,15 @@ public class TicketController : ControllerBase
     [Consumes("application/json")]
     [Route("")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTicketModel data)
+    public IActionResult Create([FromBody] CreateTicketModel data)
     {
         if (ModelState.IsValid)
         {
-            var id = await _ticketService.Create(data);
+            var id = _ticketService.Create(data);
             return Created("id", new { id = id });
         };
+
+
 
         return BadRequest(ModelState);
     }
@@ -36,9 +38,9 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("{ID}")]
     [HttpGet]
-    async public Task<ActionResult<TicketModel>> GetOneById(string ID)
+    public ActionResult<TicketModel> GetOneById(int ID)
     {
-        var ticket = await _ticketService.GetOneById(ID);
+        var ticket = _ticketService.GetOneById(ID);
         if (ticket != null)
         {
             return Ok(ticket);
@@ -51,9 +53,9 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Route("")]
     [HttpGet]
-    public async Task<ActionResult<List<TicketModel>>> GetAll()
+    public ActionResult<IEnumerable<TicketModel>> GetAll()
     {
-        var tickets = await _ticketService.GetAll();
+        var tickets = _ticketService.GetAll();
         if (tickets != null)
         {
             return Ok(tickets);
@@ -68,14 +70,12 @@ public class TicketController : ControllerBase
     [Consumes("application/json")]
     [Route("{ID}")]
     [HttpPut]
-    async public Task<IActionResult> UpdateOneById(string ID, [FromBody] UpdateTicketModel data)
+    public IActionResult UpdateOneById(int ID, [FromBody] UpdateTicketModel data)
     {
 
         if (ModelState.IsValid)
         {
-            var id = await _ticketService.UpdateOneById(ID, data);
-
-            if (id != null)
+            if (_ticketService.UpdateOneById(ID, data) != null)
             {
                 return Ok();
             }
@@ -91,11 +91,9 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Route("{ID}")]
     [HttpDelete]
-    async public Task<IActionResult> DeleteOneById(string ID)
+    public IActionResult DeleteOneById(int ID)
     {
-        var id = await _ticketService.DeleteOneById(ID);
-
-        if (id != null)
+        if (_ticketService.DeleteOneById(ID) != null)
         {
             return Ok();
         }

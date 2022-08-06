@@ -1,131 +1,52 @@
-using Npgsql;
 using TicketSystem.Database;
+using SqlKata.Execution;
 
 namespace TicketSystem.Ticket;
 
 class TicketService : TicketInterface
 {
-    async public Task<string?> Create(CreateTicketModel data)
+    public int? Create(CreateTicketModel data)
     {
-        try
+        var db = DatabaseService.OpenConnection();
+        return db?.Query("ticket").InsertGetId<int>(new
         {
-            var connection = await DatabaseService.OpenConnection();
-
-            var cmd = new NpgsqlCommand(TicketConstants.CREATE, connection)
-            {
-                Parameters = {
-                    new() { Value = data.amount },
-                    new() { Value = TicketUtils.ValidateParameter(data.title) },
-                    new() { Value = TicketUtils.ValidateParameter(data.price) },
-                    new() { Value = TicketUtils.ValidateParameter(data.description) }
-                },
-            };
-
-            var result = await cmd.ExecuteScalarAsync();
-            connection?.Close();
-
-            return result?.ToString();
-        }
-        catch
-        {
-            return null;
-        }
+            amount = data.amount,
+            title = data.title,
+            price = data.price,
+            description = data.description,
+        });
     }
 
-    async public Task<TicketModel?> GetOneById(string ID)
+    public TicketModel? GetOneById(int ID)
     {
-        try
-        {
-            var connection = await DatabaseService.OpenConnection();
-
-            var cmd = new NpgsqlCommand(TicketConstants.GET_ONE_BY_ID, connection);
-            cmd.Parameters.AddWithValue(Guid.Parse(ID));
-
-            var reader = await cmd.ExecuteReaderAsync();
-            await reader.ReadAsync();
-            var ticket = TicketUtils.ReaderToTicketModel(reader);
-            connection?.Close();
-
-            return ticket;
-        }
-        catch
-        {
-            return null;
-        }
+        var db = DatabaseService.OpenConnection();
+        return db?.Query("ticket").Select("*").Where("id", ID).First<TicketModel>();
     }
 
-    async public Task<List<TicketModel>?> GetAll()
+    public IEnumerable<TicketModel>? GetAll()
     {
-        try
-        {
-            var connection = await DatabaseService.OpenConnection();
-
-            var cmd = new NpgsqlCommand(TicketConstants.GET_ALL, connection);
-            var reader = await cmd.ExecuteReaderAsync();
-
-            var returnValue = new List<TicketModel> { };
-
-            while (await reader.ReadAsync())
-            {
-                returnValue.Add(TicketUtils.ReaderToTicketModel(reader));
-            }
-            connection?.Close();
-
-            return returnValue;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return null;
-        }
+        var db = DatabaseService.OpenConnection();
+        return db?.Query("ticket").Select("*").Get<TicketModel>();
     }
 
-    async public Task<string?> UpdateOneById(string ID, UpdateTicketModel data)
+    public int? UpdateOneById(int ID, UpdateTicketModel data)
     {
-        try
+        var ticket = GetOneById(ID);
+        var db = DatabaseService.OpenConnection();
+        return db?.Query("ticket").Where("id", ID).Update(new
         {
-            var connection = await DatabaseService.OpenConnection();
+            amount = data.amount,
+            title = data.title ?? ticket?.title,
+            price = data.price ?? ticket?.price,
+            description = data.description ?? ticket?.description,
+            updated_at = DateTime.UtcNow,
+        });
 
-            var cmd = new NpgsqlCommand(TicketConstants.UPDATE_ONE_BY_ID, connection)
-            {
-                Parameters = {
-                    new() { Value = TicketUtils.ValidateParameter(data.title) },
-                    new() { Value = TicketUtils.ValidateParameter(data.price) },
-                    new() { Value = data.amount },
-                    new() { Value = TicketUtils.ValidateParameter(data.description) },
-                    new() { Value = DateTime.Now },
-                    new() { Value = Guid.Parse(ID) },
-                }
-            };
-
-            var result = await cmd.ExecuteScalarAsync();
-            connection?.Close();
-
-            return result?.ToString();
-        }
-        catch
-        {
-            return null;
-        }
     }
 
-    async public Task<string?> DeleteOneById(string ID)
+    public int? DeleteOneById(int ID)
     {
-        try
-        {
-            var connection = await DatabaseService.OpenConnection();
-
-            var cmd = new NpgsqlCommand(TicketConstants.DELETE_ONE_BY_ID, connection);
-            cmd.Parameters.AddWithValue(Guid.Parse(ID));
-
-            var result = await cmd.ExecuteScalarAsync();
-            connection?.Close();
-
-            return result?.ToString();
-        }
-        catch
-        {
-            return null;
-        }
+        var db = DatabaseService.OpenConnection();
+        return db?.Query("ticket").Where("id", ID).Delete();
     }
 }
