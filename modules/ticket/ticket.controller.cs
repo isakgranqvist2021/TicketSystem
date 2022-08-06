@@ -28,8 +28,6 @@ public class TicketController : ControllerBase
             return Created("id", new { id = id });
         };
 
-
-
         return BadRequest(ModelState);
     }
 
