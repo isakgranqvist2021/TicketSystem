@@ -28,6 +28,7 @@ public class CreateTicketModel
     public string? description { get; set; } = null;
 }
 
+
 public class UpdateTicketModel
 {
     public string? title { get; set; } = null;

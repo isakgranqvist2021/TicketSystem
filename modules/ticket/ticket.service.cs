@@ -41,7 +41,6 @@ class TicketService : TicketInterface
             description = data.description ?? ticket?.description,
             updated_at = DateTime.UtcNow,
         });
-
     }
 
     public int? DeleteOneById(int ID)

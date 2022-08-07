@@ -22,13 +22,8 @@ public class TicketController : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CreateTicketModel data)
     {
-        if (ModelState.IsValid)
-        {
-            var id = _ticketService.Create(data);
-            return Created("id", new { id = id });
-        };
-
-        return BadRequest(ModelState);
+        var id = _ticketService.Create(data);
+        return Created("id", new { id = id });
     }
 
 
@@ -70,16 +65,10 @@ public class TicketController : ControllerBase
     [HttpPut]
     public IActionResult UpdateOneById(int ID, [FromBody] UpdateTicketModel data)
     {
-
-        if (ModelState.IsValid)
+        if (_ticketService.UpdateOneById(ID, data) != null)
         {
-            if (_ticketService.UpdateOneById(ID, data) != null)
-            {
-                return Ok();
-            }
-
-            return NotFound(ModelState);
-        };
+            return Ok();
+        }
 
         return BadRequest(ModelState);
     }
