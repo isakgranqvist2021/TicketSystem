@@ -22,8 +22,15 @@ public class TicketController : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CreateTicketModel data)
     {
-        var id = _ticketService.Create(data);
-        return Created("id", new { id = id });
+        try
+        {
+            var id = _ticketService.Create(data);
+            return Created("id", new { id = id });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
 
@@ -33,13 +40,20 @@ public class TicketController : ControllerBase
     [HttpGet]
     public ActionResult<TicketModel> GetOneById(int ID)
     {
-        var ticket = _ticketService.GetOneById(ID);
-        if (ticket != null)
+        try
         {
-            return Ok(ticket);
-        }
+            var ticket = _ticketService.GetOneById(ID);
+            if (ticket != null)
+            {
+                return Ok(ticket);
+            }
 
-        return NotFound(ModelState);
+            return NotFound(ModelState);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,13 +62,20 @@ public class TicketController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<TicketModel>> GetAll()
     {
-        var tickets = _ticketService.GetAll();
-        if (tickets != null)
+        try
         {
-            return Ok(tickets);
-        }
+            var tickets = _ticketService.GetAll();
+            if (tickets != null)
+            {
+                return Ok(tickets);
+            }
 
-        return NotFound(ModelState);
+            return NotFound(ModelState);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -65,12 +86,19 @@ public class TicketController : ControllerBase
     [HttpPut]
     public IActionResult UpdateOneById(int ID, [FromBody] UpdateTicketModel data)
     {
-        if (_ticketService.UpdateOneById(ID, data) != null)
+        try
         {
-            return Ok();
-        }
+            if (_ticketService.UpdateOneById(ID, data) != null)
+            {
+                return Ok();
+            }
 
-        return BadRequest(ModelState);
+            return BadRequest(ModelState);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -80,11 +108,19 @@ public class TicketController : ControllerBase
     [HttpDelete]
     public IActionResult DeleteOneById(int ID)
     {
-        if (_ticketService.DeleteOneById(ID) != null)
+        try
         {
-            return Ok();
-        }
+            if (_ticketService.DeleteOneById(ID) != null)
+            {
+                return Ok();
+            }
 
-        return NotFound(ModelState);
+            return NotFound(ModelState);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+
+        }
     }
 }
